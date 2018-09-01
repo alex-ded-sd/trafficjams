@@ -9,40 +9,37 @@ namespace TrafficJams.WebApi.Tests
 
     public class AvailableRegionsProviderTests
     {
-        [Fact(DisplayName = "Returns correct data from storage")]
-        public async Task GetAvailableRegionsTest_MakeServiceCall()
+        private readonly Mock<GoogleSheetsRegionService> _regionService;
+        public AvailableRegionsProviderTests()
         {
-            Mock<GoogleSheetsRegionService> storage = new Mock<GoogleSheetsRegionService>(
+            _regionService = new Mock<GoogleSheetsRegionService>(
                 new Mock<IHostingEnvironment>().Object, new Mock<IConfiguration>().Object);
-            storage.Setup(sheetsStorage => sheetsStorage.GetAvailableRegionsAsync())
+            _regionService.Setup(sheetsStorage => sheetsStorage.GetAvailableRegionsAsync())
                 .ReturnsAsync(() => new List<IList<object>>
                 {
                     new object[] {1, "Kyiv"},
                     new object[] {2, "Lviv"},
                 });
-            AvailableRegionsProvider provider = new AvailableRegionsProvider(storage.Object);
+        }
+
+        [Fact(DisplayName = "Returns correct data from _regionService")]
+        public async Task GetAvailableRegionsTest_MakeServiceCall()
+        {
+            AvailableRegionsProvider provider = new AvailableRegionsProvider(_regionService.Object);
             Dictionary<int, string> result = (Dictionary<int, string>) await provider.GetAvailableRegionsAsync();
             Assert.Equal("Kyiv", result[1]);
             Assert.Equal("Lviv", result[2]);
         }
 
-        [Fact(DisplayName = "Returns correct data from storage twice - make only one service call")]
+        [Fact(DisplayName = "Returns correct data from _regionService twice - make only one service call")]
         public async Task GetAvailableRegionsTest_GetDataFromCache()
         {
-            Mock<GoogleSheetsRegionService> storage = new Mock<GoogleSheetsRegionService>(
-                new Mock<IHostingEnvironment>().Object, new Mock<IConfiguration>().Object);
-            storage.Setup(sheetsStorage => sheetsStorage.GetAvailableRegionsAsync())
-                .ReturnsAsync(() => new List<IList<object>>
-                {
-                    new object[] {1, "Kyiv"},
-                    new object[] {2, "Lviv"}
-                });
-            AvailableRegionsProvider provider = new AvailableRegionsProvider(storage.Object);
+            AvailableRegionsProvider provider = new AvailableRegionsProvider(_regionService.Object);
             await provider.GetAvailableRegionsAsync();
             Dictionary<int, string> result = (Dictionary<int, string>)await provider.GetAvailableRegionsAsync();
             Assert.Equal("Kyiv", result[1]);
             Assert.Equal("Lviv", result[2]);
-            storage.Verify(mock => mock.GetAvailableRegionsAsync(), Times.Once);
+            _regionService.Verify(mock => mock.GetAvailableRegionsAsync(), Times.Once);
         }
     }
 }
