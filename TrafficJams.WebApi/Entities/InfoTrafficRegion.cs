@@ -10,13 +10,13 @@
     public class InfoTrafficRegion
     {
         [XmlAttribute("id")]
-        public byte Id { get; set; }
+        public int Id { get; set; }
 
         [XmlElement("length")]
         public decimal Length { get; set; }
 
         [XmlElement("level")]
-        public byte Level { get; set; }
+        public int Level { get; set; }
 
         [XmlElement("icon")]
         public string Icon { get; set; }
@@ -31,7 +31,7 @@
         public InfoTrafficRegionHint[] Hint { get; set; }
 
         [XmlElement("tend")]
-        public byte Tend { get; set; }
+        public int Tend { get; set; }
 
         [XmlElement("url")]
         public string Url { get; set; }

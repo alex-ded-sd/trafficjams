@@ -1,8 +1,8 @@
 ﻿namespace TrafficJams.WebApi
 {
+    using System;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -23,9 +23,12 @@
         {
             services.AddMvc();
             services.AddHttpClient();
+            services.AddMemoryCache();
             services.AddTransient<ITrafficJamsProvider, YandexTrafficJamsProvider>();
+            //TODO use interface instead of implementation
             services.AddTransient<AvailableRegionsProvider, AvailableRegionsProvider>();
             services.AddTransient<GoogleSheetsRegionService, GoogleSheetsRegionService>();
+            services.AddTransient<TrafficJamsCache, TrafficJamsCache>();
     }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -20,9 +20,9 @@
         public InfoWeatherUrl Url { get; set; }
 
         [XmlAttribute("climate")]
-        public byte Climate { get; set; }
+        public int Climate { get; set; }
 
         [XmlAttribute("region")]
-        public byte Region { get; set; }
+        public int Region { get; set; }
     }
 }

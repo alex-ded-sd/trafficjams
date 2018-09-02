@@ -13,10 +13,10 @@
         public string Title { get; set; }
 
         [XmlAttribute("id")]
-        public byte Id { get; set; }
+        public int Id { get; set; }
 
         [XmlAttribute("zoom")]
-        public byte Zoom { get; set; }
+        public int Zoom { get; set; }
 
         [XmlAttribute("lat")]
         public decimal Latitude { get; set; }

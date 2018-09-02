@@ -19,6 +19,7 @@
     {
         private readonly AvailableRegionsProvider _provider;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly TrafficJamsCache _cache;
 
         private const string _yandexApiTemplate =
             "https://export.yandex.com/bar/reginfo.xml?region={0}&bustCache={1}";
@@ -28,15 +29,18 @@
         /// </summary>
         /// <param name="provider"><inheritdoc cref="AvailableRegionsProvider"/>.</param>
         /// <param name="clientFactory"><inheritdoc cref="HttpClientFactory"/></param>
-        public YandexTrafficJamsProvider(AvailableRegionsProvider provider, IHttpClientFactory clientFactory)
+        /// <param name="cache"></param>
+        public YandexTrafficJamsProvider(AvailableRegionsProvider provider, IHttpClientFactory clientFactory,
+            TrafficJamsCache cache)
         {
             _provider = provider;
             _clientFactory = clientFactory;
+            _cache = cache;
         }
 
         private Info DeserializeXml(string xmlContent)
         {
-            if (!string.IsNullOrEmpty(xmlContent))
+            if(!string.IsNullOrEmpty(xmlContent))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Info), typeof(Info).GetNestedTypes());
                 using(MemoryStream memStream = new MemoryStream(Encoding.UTF8.GetBytes(xmlContent)))
@@ -55,17 +59,17 @@
             try
             {
                 HttpResponseMessage response = await httpClient.GetAsync(uri);
-                trafficJamsResponse = new TrafficJamsResponse {HttpStatusCode = response.StatusCode};
-                if (response.IsSuccessStatusCode)
+                trafficJamsResponse = new TrafficJamsResponse { HttpStatusCode = response.StatusCode };
+                if(response.IsSuccessStatusCode)
                 {
                     string responseString = await response.Content.ReadAsStringAsync();
                     Info regionInfo = DeserializeXml(responseString);
                     if(regionInfo != null)
                         trafficJamsResponse.ResponseStatus = true;
-                    trafficJamsResponse.TrafficJamInformation = regionInfo;
+                    trafficJamsResponse.Data = regionInfo;
                 }
             }
-            catch (Exception exception)
+            catch(Exception exception)
             {
                 trafficJamsResponse.ResponseStatus = false;
                 trafficJamsResponse.Exception = exception;
@@ -77,23 +81,26 @@
         public async Task<TrafficJamsResponse[]> GetAllTrafficJamsAsync()
         {
             IDictionary<int, string> regions = await _provider.GetAvailableRegionsAsync();
-            var httpClient = _clientFactory.CreateClient();
             Task<TrafficJamsResponse>[] regionsDataTasks = regions
-                .Select(region => GetDataForSingleRegionAsync(httpClient,
-                    string.Format(_yandexApiTemplate, region.Key, 1000))).ToArray();
+                .Select(region => GetRegionTrafficJamsAsync(region.Key)).ToArray();
             return await Task.WhenAll(regionsDataTasks);
         }
 
         public async Task<TrafficJamsResponse> GetRegionTrafficJamsAsync(int code)
         {
+            TrafficJamsResponse response = new TrafficJamsResponse();
             IDictionary<int, string> regions = await _provider.GetAvailableRegionsAsync();
-            if (regions.Keys.Contains(code))
+            if(regions.Keys.Contains(code))
             {
-                var httpClient = _clientFactory.CreateClient();
-                return await GetDataForSingleRegionAsync(httpClient, string.Format(_yandexApiTemplate, code, 1000));
+                response = await _cache.GetOrAddAsync(code, async regionCode =>
+                {
+                    var httpClient = _clientFactory.CreateClient();
+                    return await GetDataForSingleRegionAsync(httpClient,
+                        string.Format(_yandexApiTemplate, regionCode, 1000));
+                });
             }
 
-            return new TrafficJamsResponse();
+            return response;
         }
     }
 }

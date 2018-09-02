@@ -16,10 +16,10 @@
         public string Title { get; set; }
 
         [XmlAttribute("region")]
-        public byte Region { get; set; }
+        public int Region { get; set; }
 
         [XmlAttribute("zoom")]
-        public byte Zoom { get; set; }
+        public int Zoom { get; set; }
 
         [XmlAttribute("lat")]
         public decimal Latiude { get; set; }

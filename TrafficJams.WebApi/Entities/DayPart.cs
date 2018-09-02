@@ -38,7 +38,7 @@
         public WindDirection WindDirection { get; set; }
 
         [XmlElement("dampness")]
-        public byte Dampness { get; set; }
+        public int Dampness { get; set; }
 
         [XmlElement("hectopascal")]
         public ushort Hectopascal { get; set; }
@@ -63,7 +63,7 @@
         public DateTime Observation { get; set; }
 
         [XmlAttribute("typeid")]
-        public byte TypeId { get; set; }
+        public int TypeId { get; set; }
 
         [XmlAttribute("type")]
         public string Type { get; set; }

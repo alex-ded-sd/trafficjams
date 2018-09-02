@@ -17,6 +17,6 @@
         public string Color { get; set; }
 
         [XmlText]
-        public sbyte Value { get; set; }
+        public int Value { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace TrafficJams.WebApi.Controllers
 {
     using System.Threading.Tasks;
-    using Entities;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/trafficjams")]

@@ -14,6 +14,6 @@
         public string Weekday { get; set; }
 
         [XmlText]
-        public byte Value { get; set; }
+        public int Value { get; set; }
     }
 }

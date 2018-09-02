@@ -14,6 +14,6 @@
         public string Name { get; set; }
 
         [XmlText]
-        public byte Value { get; set; }
+        public int Value { get; set; }
     }
 }

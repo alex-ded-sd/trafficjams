@@ -20,7 +20,7 @@
         public string TimeZone { get; set; }
 
         [XmlElement("summer-time")]
-        public byte SummerTime { get; set; }
+        public int SummerTime { get; set; }
 
         [XmlElement("sun_rise")]
         //TODO datetime
