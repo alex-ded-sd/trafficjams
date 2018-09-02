@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -60,11 +61,19 @@
                 ApplicationName = "TrafficJams"
             });
             string spreadsheetId = "1AhemqFP2lZ4ifcXGmArOydA3w24Yd7LdQ3KZveN-JR4";
-            string range = "Class Data!A1:B";
+            string range = "Регионы!A1:B";
             SpreadsheetsResource.ValuesResource.GetRequest request =
                 service.Spreadsheets.Values.Get(spreadsheetId, range);
-            ValueRange response = request.Execute();
-            return response.Values;
+            try
+            {
+                ValueRange response = request.Execute();
+                return response.Values;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         /// <summary>

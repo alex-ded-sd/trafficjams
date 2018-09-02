@@ -1,6 +1,9 @@
 ﻿namespace TrafficJams.WebApi
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -8,8 +11,10 @@
     /// </summary>
     public class AvailableRegionsProvider
     {
+        //TODO code smell
         private readonly GoogleSheetsRegionService _storage;
-        private Dictionary<int, string> _cachedRegions;
+        private static Dictionary<int, string> _cachedRegions;
+        private static readonly SemaphoreSlim _lockSemaphoreSlim = new SemaphoreSlim(1, 1);
 
 
         /// <summary>
@@ -27,20 +32,23 @@
         /// <returns>Dictionary, contains region code and region name.</returns>
         public async Task<IDictionary<int, string>> GetAvailableRegionsAsync()
         {
-            if (_cachedRegions != null)
-                return _cachedRegions;
-
-            IList<IList<object>> rawData = await _storage.GetAvailableRegionsAsync();
-            Dictionary<int, string> regions = new Dictionary<int, string>();
-            if(rawData != null && rawData.Count > 0)
+            await _lockSemaphoreSlim.WaitAsync();
+            if (_cachedRegions == null)
             {
-                foreach(var row in rawData)
+                IList<IList<object>> rawData = await _storage.GetAvailableRegionsAsync();
+                Dictionary<int, string> regions = new Dictionary<int, string>();
+                if(rawData != null && rawData.Count > 0)
                 {
-                    regions.Add((int)row[0], (string)row[1]);
+                    foreach(IList<object> row in rawData)
+                    {
+                        if(int.TryParse(row[0].ToString(), out int key) && !regions.ContainsKey(key))
+                            regions.Add(key, row[1].ToString());
+                    }
                 }
+                _cachedRegions = regions;
             }
-
-            _cachedRegions = regions;
+            
+            _lockSemaphoreSlim.Release();
             return _cachedRegions;
         }
 
