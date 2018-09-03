@@ -260,4 +260,3 @@ paket-files/
 __pycache__/
 *.pyc
 /TrafficJams.WebApi/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
-/TrafficJams.WebApi/credentials.json
