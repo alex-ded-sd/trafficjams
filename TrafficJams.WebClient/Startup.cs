@@ -23,6 +23,7 @@
             }
 
 	        app.UseMvcWithDefaultRoute();
+	        app.UseStaticFiles();
         }
     }
 }
