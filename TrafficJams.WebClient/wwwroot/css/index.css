@@ -1,3 +1,9 @@
 ﻿body {
 	background-image: url("../images/background.png");
 }
+.header-container {
+    display: flex;
+}
+.city-select, .country-select {
+    min-width: 173px;
+}
