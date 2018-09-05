@@ -1,0 +1,23 @@
+﻿<script id="weatherInfoTemplate" type="text/template">
+    <div class="weather-image-container"><img src="{{currentWeatherImageUrl}}" /></div>
+    <div class="weather-info-container">
+        <div class="current-weather-info-container">
+            <div class="temperature-level-container" style="background-color: #{{currentTemperature.color}};">
+                <span class="temperature-level">{{currentTemperature.value}}</span>
+            </div>
+            <div class="weather-text-info-container">
+                <label class="weather-leabel">Погода: </label>
+                <span class="weather-text">{{weatherText}}</span>
+            </div>
+        </div>
+        <div class="day-weather-container">
+            {{#nextDayParts}}
+            <div class="day-part-container">
+                <div class="day-part-name-container"><span class="day-part-name">{{name}}</span></div>
+                <div class="day-part-image-container"><img src="{{imageSrc}}" /></div>
+                <div class="day-part-temperature-container"><span class="day-part-temperature">{{tFrom}}/{{tTo}}</span></div>
+            </div>
+            {{/nextDayParts}}
+        </div>
+    </div>
+</script>
