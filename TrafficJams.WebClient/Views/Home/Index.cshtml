@@ -125,6 +125,8 @@
                 $.get(apiUrl, function (data, status) {
                     setCityInfo(data.data);
                     setWeatherInfo(data.data);
+                }).fail(function() {
+                    alert( "error" );
                 });
             });
 
