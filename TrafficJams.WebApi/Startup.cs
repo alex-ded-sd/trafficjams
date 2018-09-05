@@ -21,7 +21,8 @@
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+	        services.AddCors();
+			services.AddMvc();
             services.AddHttpClient();
             services.AddMemoryCache();
             services.AddTransient<ITrafficJamsProvider, YandexTrafficJamsProvider>();
@@ -38,8 +39,10 @@
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMvcWithDefaultRoute();
+	        app.UseCors(builder =>
+		        builder.WithOrigins("http://localhost:55354")
+		        .AllowAnyHeader());
+			app.UseMvcWithDefaultRoute();
         }
     }
 }
