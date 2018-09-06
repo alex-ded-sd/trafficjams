@@ -1,8 +1,8 @@
 ﻿body {
 	background-image: url("../images/background.png");
 }
-.city-container, .header-container, .main-container,
-.city-info-container, .traffic-level-container, city-name-container {
+.header-container, .main-container, .city-info-container,
+.traffic-level-container, city-name-container {
     display: flex;
 }
 
@@ -33,8 +33,18 @@
     background-color: rgba(255,255,255,0.5);
     margin-top: 70px;
     justify-content: space-between;
+}
+
+.weather-container {
+    background-color: rgba(255,255,255,0.5);
+    margin-top: 10px;
+}
+
+.weather-container, .city-container {
+    display: none;
     padding: 32px;
 }
+
 .content-container {
     width: 1000px;
 }
@@ -47,7 +57,32 @@
     font-size: 20px;
 }
 
-.city-name {
-    font-weight: 450;
+.city-name, .temperature-level {
+    font-weight: 400;
     font-size: 24px;
+}
+
+.weather-info-container {
+    flex-grow: 2;
+    padding-left: 20px;
+}
+
+.current-weather-info-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.traffic-label, .weather-leabel {
+    font-weight: 500;
+}
+
+.day-part-container {
+    display: flex;
+    max-width: 400px;
+    justify-content: space-between;
+}
+
+.day-part-name-container {
+    width: 50px;
 }

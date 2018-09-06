@@ -11,7 +11,6 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.2/mustache.min.js"></script>
-    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="~/css/index.css">
@@ -23,6 +22,8 @@
     <script type="text/javascript">
         //code smell - it's not amd implementation.
         $(document).ready(function () {
+            
+            
             var cities = [
                 {
                     "id": "143",
@@ -55,7 +56,6 @@
                 var selectedCountry = $(".country-select").val();
                 var citySelect = $(".city-select");
                 citySelect.find('option').remove();
-                $('<option>').appendTo(citySelect);
                 $.each(cities, function (key, city) {
                     if (city.countryId === selectedCountry) {
                         $('<option>').val(city.id).text(city.name).appendTo(citySelect);
@@ -75,10 +75,10 @@
                 var trafficInfoText = trafficInfo.infoTrafficRegion.hint
                     .find(item => item.lang === data.lang).value;
                 var currentDate =
-                [
-                    weather.day.date.day.weekday, weather.day.date.day.value,
-                    weather.day.date.month.name, trafficInfo.infoTrafficRegion.time
-                ].join(', ');
+                    [
+                        weather.day.date.day.weekday, weather.day.date.day.value,
+                        weather.day.date.month.name, trafficInfo.infoTrafficRegion.time
+                    ].join(', ');
                 var mustacheTrafficInfo = {
                     "trafficLevel": {
                         "color": trafficInfo.infoTrafficRegion.icon,
@@ -91,6 +91,7 @@
                 var template = $("#cityInfoTemplate").html();
                 var html = Mustache.to_html(template, mustacheTrafficInfo);
                 $('.city-container').html(html);
+                $('.city-container').css('display', 'flex');
             }
 
             function setWeatherInfo(data) {
@@ -107,26 +108,27 @@
 
                 var musctacheWeatherInfo = {
                     "currentWeatherImageUrl": weather.day.dayPart[0].image,
-                    "currentTemperature": {
-                        "color": weather.day.dayPart[0].temperature.color,
-                        "value": weather.day.dayPart[0].temperature.value
-                    },
+                    "currentWeatherImageSize": weather.day.dayPart[0].imagev3.size,
+                    "currentTemperature": weather.day.dayPart[0].temperature.value,
                     "weatherText": weather.day.dayPart[0].weatherType,
                     "nextDayParts": nextDayParts
                 }
                 var template = $("#weatherInfoTemplate").html();
                 var html = Mustache.to_html(template, musctacheWeatherInfo);
                 $('.weather-container').html(html);
+                $('.weather-container').css('display', 'flex');
             }
 
             $(".city-select").change(function () {
                 var cityId = $(this).val();
                 var apiUrl = "http://localhost:55075/api/trafficjams/" + cityId;
                 $.get(apiUrl, function (data, status) {
-                    setCityInfo(data.data);
-                    setWeatherInfo(data.data);
-                }).fail(function() {
-                    alert( "error" );
+                    if (data.responseStatus) {
+                        setCityInfo(data.data);
+                        setWeatherInfo(data.data);
+                    } else {
+                        alert("Ошибка получения данных");
+                    }
                 });
             });
 
@@ -143,7 +145,6 @@
             <div>
                 <label>Ваша страна</label>
                 <select class="form-control country-select">
-                    <option></option>
                     <option value="1">Украина</option>
                     <option value="2">Россия</option>
                 </select>
